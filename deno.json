@@ -1,0 +1,20 @@
+{
+  "fmt": {
+    "options": {
+      "useTabs": false,
+      "lineWidth": 120,
+      "indentWidth": 2,
+      "singleQuote": true,
+      "proseWrap": "preserve"
+    }
+  },
+  "lint": {
+    "files": {
+      "include": ["src/"]
+    }
+  },
+  "tasks": {
+    "go": "deno run --allow-env --allow-net src/main.ts",
+    "type-check": "deno check src/main.ts"
+  }
+}
