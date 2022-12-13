@@ -1,27 +1,26 @@
-import { createRBTree, RedBlackTree } from '../data-structures/RBTree.ts';
+import { ascend, descend, RedBlackTree } from "https://deno.land/std@0.167.0/collections/red_black_tree.ts";
 
 /**
  * TODO:
  * 1. [stretch] Experiment with Skip List instead Red-black Tree
  * 2. [stretch] Experiment with combining the Ordered Set with Hash Table to improve lookup time to O(1)
- * 3. [stretch] Write Red-black tree from scratch instead of using 3rd party code
  */
 
 class OrderBookSide {
   static INCR = 'increasing';
   static DECR = 'decreasing';
-  private cmp: (a: number, b: number) => number;
-  private tree: RedBlackTree<number, Array<number>>;
+  private cmp: (a: number[], b: number[]) => number;
+  private tree: RedBlackTree<number[]>;
   constructor({ sort }: { sort: string }) {
     this.cmp = sort === OrderBookSide.INCR ? this.increasingComprator : this.decreasingComprator;
-    this.tree = createRBTree(this.cmp);
+    this.tree = new RedBlackTree<number[]>(this.cmp);
   }
 
   init(list: Array<Array<number>>) {
     for (let [price, quantity] of list) {
       price -= 0; // str to num faster than Number.parseFloat
       quantity -= 0; //  str to num faster than Number.parseFloat
-      this.tree = this.tree.insert(price, [price, quantity]);
+      this.tree.insert([price, quantity]);
     }
   }
 
@@ -33,30 +32,31 @@ class OrderBookSide {
     for (let [price, quantity] of list) {
       price -= 0; // str to num faster than Number.parseFloat
       quantity -= 0; //  str to num faster than Number.parseFloat
-      if (this.tree.get(price)) {
-        if (quantity === 0) {
-          this.tree = this.tree.remove(price);
-        } else {
-          this.tree.get(price).value = [price, quantity];
+      const value = this.tree.find([price, quantity]);
+      if (value) {
+        this.tree.remove(value);
+        if (quantity !== 0) {
+          this.tree.remove(value)
+          this.tree.insert([price, quantity]);
         }
       } else if (quantity === 0) {
         continue;
       } else {
-        this.tree = this.tree.insert(price, [price, quantity]);
+        this.tree.insert([price, quantity]);
       }
     }
   }
 
   top(len: number) {
-    return this.tree.values.slice(0, len);
+    return [...this.tree].slice(0, len);
   }
 
-  protected increasingComprator(a: number, b: number) {
-    return a - b;
+  protected increasingComprator(a: number[], b: number[]) {
+    return ascend(a[0], b[0]);
   }
 
-  protected decreasingComprator(a: number, b: number) {
-    return b - a;
+  protected decreasingComprator(a: number[], b: number[]) {
+    return descend(a[0], b[0]);
   }
 }
 
