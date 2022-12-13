@@ -97,4 +97,5 @@ class OrderBookDiffs {
   }
 }
 
-export default OrderBookDiffs;
+export type { Diff };
+export { OrderBookDiffs }

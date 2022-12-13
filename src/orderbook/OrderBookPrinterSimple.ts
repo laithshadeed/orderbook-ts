@@ -1,7 +1,13 @@
 import OrderBookPrinter from './OrderBookPrinter.ts';
 
+interface Args {
+  bids: number[][];
+  asks: number[][];
+}
+
 export default class OrderBookPrinterSimple implements OrderBookPrinter {
-  print({ bids, asks }: { bids: Array<Array<number>>; asks: Array<Array<number>> }) {
+  print(args: Args) {
+    const { asks, bids } = args;
     console.clear();
     console.log(
       asks

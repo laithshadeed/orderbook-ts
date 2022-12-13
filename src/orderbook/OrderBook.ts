@@ -1,4 +1,4 @@
-import OrderBookDiffs from './OrderBookDiffs.ts';
+import { Diff, OrderBookDiffs } from './OrderBookDiffs.ts';
 import OrderBookSnapshot from './OrderBookSnapshot.ts';
 import OrderBookSide from './OrderBookSide.ts';
 import OrderBookPrinterSimple from './OrderBookPrinterSimple.ts';
@@ -17,7 +17,7 @@ class OrderBook {
   private snapshot: OrderBookSnapshot;
   private bids: OrderBookSide;
   private asks: OrderBookSide;
-  private printer = OrderBookPrinterSimple;
+  private printer: OrderBookPrinterSimple;
   private isWaitingForFirstUpdate = true;
   private isFetchingSnapshot = false;
   private isSnapshotFetched = false;
@@ -56,7 +56,7 @@ class OrderBook {
 
   // Docs: https://github.com/binance/binance-spot-api-docs/blob/master/web-socket-streams.md#how-to-manage-a-local-order-book-correctly
   update() {
-    for (const { firstUpdateId, lastUpdateId, bids, asks } of this.diffs) {
+    for (const { firstUpdateId, lastUpdateId, bids, asks } of this.diffs as unknown as Diff[]) {
       if (this.isWaitingForFirstUpdate) {
         if (lastUpdateId >= this.lastUpdateId + 1 && firstUpdateId <= this.lastUpdateId + 1) {
           this.isWaitingForFirstUpdate = false;

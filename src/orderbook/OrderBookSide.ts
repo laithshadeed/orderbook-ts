@@ -47,7 +47,7 @@ class OrderBookSide {
     }
   }
 
-  top(len: number) {
+  top(len: number): number[][] {
     return [...this.tree].slice(0, len);
   }
 
